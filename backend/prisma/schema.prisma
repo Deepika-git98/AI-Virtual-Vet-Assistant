@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  pets Pet[]
+  
+  @@map("users")
+}
+
+model Pet {
+  id          String   @id @default(cuid())
+  name        String
+  species     String   
+  breed       String?
+  age         Int?
+  weight      Float?
+  gender      String?
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  symptomReports SymptomReport[]
+  
+  @@map("pets")
+}
+
+model SymptomReport {
+  id          String   @id @default(cuid())
+  symptoms    String[] 
+  severity    String  
+  duration    String
+  description String?
+  createdAt   DateTime @default(now())
+  
+  petId String
+  pet   Pet    @relation(fields: [petId], references: [id], onDelete: Cascade)
+  
+  analysis SymptomAnalysis?
+  
+  @@map("symptom_reports")
+}
+
+model SymptomAnalysis {
+  id               String   @id @default(cuid())
+  aiAnalysis       String   // AI-generated analysis
+  recommendations  String[] // Array of recommendations
+  urgencyLevel     String   // low, medium, high, emergency
+  suggestedActions String[]
+  createdAt        DateTime @default(now())
+  
+  symptomReportId String        @unique
+  symptomReport   SymptomReport @relation(fields: [symptomReportId], references: [id], onDelete: Cascade)
+  
+  @@map("symptom_analyses")
+}
