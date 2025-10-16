@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/authContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -21,13 +21,20 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 // Dashboard component for testing
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Optionally call logout() here if you want to log the user out
+    // logout();
+    navigate('/login');
+  };
 
   return (
     <div className="p-8">
       <h1>Welcome to AI Virtual Vet Assistant</h1>
       <p>Hello, {user?.email}!</p>
       <button
-        onClick={logout}
+        onClick={handleLogout}
         className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
       >
         Logout

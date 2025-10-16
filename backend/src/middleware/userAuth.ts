@@ -1,13 +1,21 @@
 import jwt from 'jsonwebtoken';
 import { Request, RequestHandler } from 'express';
+import { ParamsDictionary } from 'express-serve-static-core';
+import { ParsedQs } from 'qs';
 
-interface AuthRequest extends Request {
-  userId?: string;
+export interface AuthRequest<
+  Params extends ParamsDictionary = ParamsDictionary,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = ParsedQs
+> extends Request<Params, ResBody, ReqBody, ReqQuery> {
+  userId: string;
 }
 
 // Middleware to authenticate JWT token
 export const authenticateToken: RequestHandler = (req, res, next): void => {
   const authHeader = req.headers['authorization'];
+  const authRequest = req as AuthRequest;
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
@@ -16,9 +24,12 @@ export const authenticateToken: RequestHandler = (req, res, next): void => {
   }
 
   jwt.verify(token, process.env.JWT_SECRET!, (err, decoded: any) => {
-    console.log('TOKEN:', token);
-    if (err) return res.status(403).json({ error: 'Invalid token' });
-    (req as AuthRequest).userId = decoded.userId;
+    if (err) {
+      res.status(403).json({ error: 'Invalid token' });
+      return;
+    }
+
+    authRequest.userId = decoded.userId;
     next();
   });
 };

@@ -1,14 +1,21 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/userAuth';
-import { createPet, getPets, updatePet, deletePet } from '../controllers/petController';
+import {
+    createPet,
+    getPets,
+    getPetById,
+    updatePet,
+    deletePet
+} from '../controllers/petController';
 
 const router = express.Router();
 
-router.use(authenticateToken as express.RequestHandler); // Apply authentication middleware to all routes
+router.use(authenticateToken); // Apply authentication middleware to all routes
 
-router.post('/', createPet as express.RequestHandler);
-router.get('/', getPets as express.RequestHandler);
-router.put('/:id', updatePet as express.RequestHandler);
-router.delete('/:id', deletePet as express.RequestHandler);
+router.post('/', createPet);
+router.get('/', getPets);
+router.get('/:id', getPetById);
+router.put('/:id', updatePet);
+router.delete('/:id', deletePet);
 
 export default router;
