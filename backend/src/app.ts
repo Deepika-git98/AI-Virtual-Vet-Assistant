@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth';
 import petRoutes from './routes/pet';
+import symptomRoutes from './routes/symptom';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/pets', petRoutes);
+app.use('/api/symptoms', symptomRoutes);
 
 // Health check
 import { Request, Response } from 'express';

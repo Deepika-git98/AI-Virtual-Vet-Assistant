@@ -1,17 +1,10 @@
-import React, {useState, createContext, useContext, useEffect} from "react";
-import axios from 'axios'
-
-interface User {
-    id: string;
-    email: string;
-    userName: string;
-    firstName?: string;
-    lastName?: string;
-}
+import React, { useState, createContext, useContext, useEffect } from "react";
+import { UserSummary } from '../types/api';
+import { api } from '../utils/api';
 
 interface AuthContextType {
-    user: User | null;
-    token : string | null;
+    user: UserSummary | null;
+    token: string | null;
     login: (email: string, password: string) => Promise<void>;
     register: (userData: any) => Promise<void>;
     logout: () => Promise<void>;
@@ -19,15 +12,15 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-export const useAuth = () => {  
+export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
 }
-export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
-    const [user, setUser] = useState<User | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState<UserSummary | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -40,14 +33,17 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         }
         setLoading(false);
     }, []);
+    // const login = async (email: string, password: string) => { 
+
+    // }
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await axios.post('http://localhost:3001/api/auth/login', { email, password });
-            setUser(response.data.user);
-            setToken(response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            localStorage.setItem('token', response.data.token);
+            const response = await api.post<{ token: string; user: UserSummary }>(`/auth/login`, { email, password });
+            setUser(response.user);
+            setToken(response.token);
+            localStorage.setItem('user', JSON.stringify(response.user));
+            localStorage.setItem('token', response.token)
         } catch (error) {
             console.error("Login failed", error);
             throw error;
@@ -56,11 +52,11 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
     const register = async (userData: any) => {
         try {
-            const response = await axios.post('/api/auth/register', userData);
-            setUser(response.data.user);
-            setToken(response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            localStorage.setItem('token', response.data.token);
+            const response = await api.post<{ token: string; user: UserSummary }>(`/auth/register`, userData);
+            setUser(response.user);
+            setToken(response.token);
+            localStorage.setItem('user', JSON.stringify(response.user));
+            localStorage.setItem('token', response.token);
         } catch (error) {
             console.error("Registration failed", error);
             throw error;
@@ -68,15 +64,10 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     };
 
     const logout = async () => {
-        try {
-            await axios.post('/api/auth/logout');
-            setUser(null);
-            setToken(null);
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-        } catch (error) {
-            console.error("Logout failed", error);
-        }
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
     };
 
     return (

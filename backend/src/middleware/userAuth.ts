@@ -9,7 +9,7 @@ export interface AuthRequest<
   ReqBody = any,
   ReqQuery = ParsedQs
 > extends Request<Params, ResBody, ReqBody, ReqQuery> {
-  userId: string;
+  userId?: string;
 }
 
 // Middleware to authenticate JWT token

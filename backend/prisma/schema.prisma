@@ -31,6 +31,12 @@ model Pet {
   gender      String?
   description String?
   imageUrl    String?
+  color       String?
+  isNeutered  Boolean  @default(false)
+  medicalHistory String?
+  allergies      String?
+  medications    String?
+  vetInfo        String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -44,12 +50,18 @@ model Pet {
 
 model SymptomReport {
   id          String   @id @default(cuid())
-  symptoms    String[] 
-  severity    String  
+  title       String
+  symptoms    String[]
+  severity    String
+  frequency   String?
+  bodyPart        String?
+  behaviorChanges String?
+  appetite        String?
+  energy          String? 
   duration    String
   description String?
   createdAt   DateTime @default(now())
-  
+  updatedAt   DateTime @updatedAt
   petId String
   pet   Pet    @relation(fields: [petId], references: [id], onDelete: Cascade)
   

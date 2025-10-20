@@ -54,7 +54,21 @@ export const createPet = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { name, species, breed, age, weight, gender, description } = req.body ?? {};
+    const {
+      name,
+      species,
+      breed,
+      age,
+      weight,
+      gender,
+      description,
+      color,
+      isNeutered,
+      medicalHistory,
+      allergies,
+      medications,
+      vetInfo
+    } = req.body ?? {};
 
     if (!name || !species) {
       res.status(400).json({ error: 'Name and species are required' });
@@ -82,6 +96,12 @@ export const createPet = async (req: Request, res: Response): Promise<void> => {
         weight: weightResult.value,
         gender: gender ?? null,
         description: description ?? null,
+        color: color ?? null,
+        isNeutered: Boolean(isNeutered),
+        medicalHistory: medicalHistory ?? null,
+        allergies: allergies ?? null,
+        medications: medications ?? null,
+        vetInfo: vetInfo ?? null,
         userId
       }
     });
@@ -167,7 +187,7 @@ export const updatePet = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { name, species, breed, age, weight, gender, description } = req.body ?? {};
+    const { name, species, breed, age, weight, gender, description, color, isNeutered, medicalHistory, allergies, medications, vetInfo } = req.body ?? {};
 
     const updateData: Prisma.PetUpdateInput = {};
 
@@ -176,6 +196,12 @@ export const updatePet = async (req: Request, res: Response): Promise<void> => {
     if (breed !== undefined) updateData.breed = breed ?? null;
     if (gender !== undefined) updateData.gender = gender ?? null;
     if (description !== undefined) updateData.description = description ?? null;
+    if (color !== undefined) updateData.color = color ?? null;
+    if (isNeutered !== undefined) updateData.isNeutered = Boolean(isNeutered);
+    if (medicalHistory !== undefined) updateData.medicalHistory = medicalHistory ?? null;
+    if (allergies !== undefined) updateData.allergies = allergies ?? null;
+    if (medications !== undefined) updateData.medications = medications ?? null;
+    if (vetInfo !== undefined) updateData.vetInfo = vetInfo ?? null;
 
     if (age !== undefined) {
       const ageResult = parseOptionalInteger(age);
