@@ -1,11 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/authContext';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/authContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
-
 import Login from './components/loginPage';
+import Dashboard from './components/dashboardPage';
 
 // Move ProtectedRoute inside the component that has access to Router context
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -16,24 +16,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   return user ? <>{children}</> : <Navigate to="/login" />;
-};
-
-// Dashboard component for testing
-const Dashboard: React.FC = () => {
-  const { user, logout } = useAuth();
-
-  return (
-    <div className="p-8">
-      <h1>Welcome to AI Virtual Vet Assistant</h1>
-      <p>Hello, {user?.email}!</p>
-      <button
-        onClick={logout}
-        className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-      >
-        Logout
-      </button>
-    </div>
-  );
 };
 
 function App() {
